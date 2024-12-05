@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PR5
@@ -20,7 +22,12 @@ namespace PR5
 
         static void Main(string[] args)
         {
+            dbContext = new Context();
             OnSettings();
+            Thread tListner = new Thread(ConnectServer);
+            tListner.Start();
+            Thread tDisconnect = new Thread(DisconnectClient);
+            tDisconnect.Start();
             while (true) SetCommand();
         }
 
@@ -57,7 +64,7 @@ namespace PR5
                 sw.Close();
             }
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Чтобы изменить, введите команду: /config");
+            Console.WriteLine("To change, write the command: /config");
         }
 
         static void SetCommand()
@@ -161,6 +168,110 @@ namespace PR5
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+
+        static void ConnectServer()
+        {
+            IPEndPoint EndPoint = new IPEndPoint(ServerIPAddress, ServerPort);
+            Socket SocketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            SocketListener.Bind(EndPoint);
+            SocketListener.Listen(MaxClient);
+            while (true)
+            {
+                try
+                {
+                    Socket Handler = SocketListener.Accept();
+                    byte[] bytes = new byte[10485760];
+                    int byteRec = Handler.Receive(bytes);
+                    string Message = Encoding.UTF8.GetString(bytes, 0, byteRec);
+                    string Response = SetCommandClient(Message);
+                    Handler.Send(Encoding.UTF8.GetBytes(Response));
+                    Handler.Shutdown(SocketShutdown.Both);
+                    Handler.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+            }
+        }
+
+        static void DisconnectClient()
+        {
+            while (true)
+            {
+                for (int i = 0; i < AllClients.Count; i++)
+                {
+                    int ClientDuration = (int)DateTime.Now.Subtract(AllClients[i].DateConnect).TotalSeconds;
+                    if (ClientDuration > Duration)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Client: {AllClients[i].Token} disconnect from server due to timeout");
+                        AllClients.RemoveAt(i);
+                    }
+                }
+                Thread.Sleep(1000);
+            }
+        }
+
+        static string SetCommandClient(string Command)
+        {
+            if (Command.StartsWith("/auth "))
+            {
+                string[] parts = Command.Split(' ');
+                if (parts.Length == 3)
+                {
+                    string username = parts[1];
+                    string password = parts[2];
+                    if (dbContext.AuthenticateUser(username, password, out bool isBlackListed))
+                    {
+                        if (isBlackListed)
+                        {
+                            return "/blacklist";
+                        }
+                        if (AllClients.Count >= MaxClient)
+                        {
+                            return "/limit";
+                        }
+                        var newClient = new Client { Token = Client.GenerateToken(), DateConnect = DateTime.Now, Username = username };
+                        AllClients.Add(newClient);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"New client connection: {newClient.Token}");
+                        return newClient.Token;
+                    }
+                    else
+                    {
+                        return "/auth_failed";
+                    }
+                }
+                else
+                {
+                    return "/invalid_command";
+                }
+            }
+            else if (Command == "/token")
+            {
+                if (AllClients.Count < MaxClient)
+                {
+                    var newClient = new Client();
+                    AllClients.Add(newClient);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"New client connection: {newClient.Token}");
+                    return newClient.Token;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("There isn't enough space on the license server");
+                    return "/limit";
+                }
+            }
+            else
+            {
+                var Client = AllClients.Find(x => x.Token == Command);
+                return Client != null ? "/connect" : "/disconnect";
             }
         }
     }
