@@ -75,5 +75,17 @@ namespace PR5
                 default: if (Command.Contains("/disconnect")) DisconnectServer(Command); break;
             }
         }
+
+        static void GetStatus()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Count clients: {AllClients.Count}");
+            foreach (var client in AllClients)
+            {
+                int Duration = (int)DateTime.Now.Subtract(client.DateConnect).TotalSeconds;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Client: {client.Token}, time connection: {client.DateConnect.ToString("HH:mm:ss dd.MM")}, duration: {Duration}");
+            }
+        }
     }
 }
