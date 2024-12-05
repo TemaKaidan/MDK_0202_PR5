@@ -41,13 +41,13 @@ namespace PR5
             else
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"Укажите ip-адрес: ");
+                Console.Write($"Please, provide the IP-address: ");
                 ServerIPAddress = IPAddress.Parse(Console.ReadLine());
-                Console.Write($"Укажите порт: ");
+                Console.Write($"Please, specify the port: ");
                 ServerPort = int.Parse(Console.ReadLine());
-                Console.Write($"Укажите максимальное количество клиентов: ");
+                Console.Write($"Please, specify the maximum number of clients: ");
                 MaxClient = int.Parse(Console.ReadLine());
-                Console.Write($"Укажите срок действия лицензии: ");
+                Console.Write($"Please, specify the duration of the license: ");
                 Duration = int.Parse(Console.ReadLine());
                 StreamWriter sw = new StreamWriter(Path);
                 sw.WriteLine(ServerIPAddress.ToString());
@@ -88,5 +88,40 @@ namespace PR5
             }
         }
 
+        static void Help()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Command to the clients: ");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("/config");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("  - set initial settings");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("/disconnect");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" - disconnect users from server");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("/status");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("  - show list users");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("/add_to_blacklist");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" - add user to blacklist");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("/remove_from_blacklist");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" - remove user from blacklist");
+        }
     }
 }
