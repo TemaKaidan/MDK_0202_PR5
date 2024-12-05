@@ -97,7 +97,7 @@ namespace PR5
             Console.Write("/config");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("  - set initial settings");
+            Console.WriteLine(" - set initial settings");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/disconnect");
@@ -109,7 +109,7 @@ namespace PR5
             Console.Write("/status");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("  - show list users");
+            Console.WriteLine(" - show list users");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/add_to_blacklist");
