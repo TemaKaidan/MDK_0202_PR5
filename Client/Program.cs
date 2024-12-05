@@ -50,6 +50,16 @@ namespace Client
             Console.WriteLine("To change, write the command: /config");
         }
 
+        static void AuthenticateUser()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("Enter your username: ");
+            string username = Console.ReadLine();
+            Console.Write("Enter your password: ");
+            string password = Console.ReadLine();
+            ConnectServer(username, password);
+        }
+
         static void ConnectServer(string username, string password)
         {
             IPEndPoint EndPoint = new IPEndPoint(ServerIPAddress, ServerPort);
