@@ -21,6 +21,7 @@ namespace PR5
         static void Main(string[] args)
         {
             OnSettings();
+            while (true) SetCommand();
         }
 
         static void OnSettings()
@@ -57,6 +58,22 @@ namespace PR5
             }
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Чтобы изменить, введите команду: /config");
+        }
+
+        static void SetCommand()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            string Command = Console.ReadLine();
+            switch (Command)
+            {
+                case "/config": File.Delete(Directory.GetCurrentDirectory() + "/.config"); OnSettings(); break;
+                case "/status": GetStatus(); break;
+                case "/help": Help(); break;
+                case "/add_to_blacklist": AddToBlacklist(); break;
+                case "/remove_from_blacklist": RemoveFromBlacklist(); break;
+                case "/blacklist": dbContext.ShowBlacklist(); break;
+                default: if (Command.Contains("/disconnect")) DisconnectServer(Command); break;
+            }
         }
     }
 }
