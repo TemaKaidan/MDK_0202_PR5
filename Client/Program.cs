@@ -20,7 +20,11 @@ namespace Client
 
         static void Main(string[] args)
         {
-            
+            OnSettings();
+
+            Thread tCheckToken = new Thread(CheckToken);
+            tCheckToken.Start();
+            while (true) SetCommand();
         }
 
         static void OnSettings()
