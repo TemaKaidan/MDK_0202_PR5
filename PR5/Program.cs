@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PR5
 {
-    internal class Program
+    public class Program
     {
         static IPAddress ServerIPAddress;
         static int ServerPort;
@@ -137,6 +137,14 @@ namespace PR5
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Client {client.Token} disconnected due to being added to blacklist.");
             }
+        }
+
+        static void RemoveFromBlacklist()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("Enter username to remove from blacklist: ");
+            string username = Console.ReadLine();
+            dbContext.RemoveFromBlacklist(username);
         }
     }
 }
