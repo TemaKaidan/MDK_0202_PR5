@@ -5,7 +5,7 @@ namespace PR5
 {
     public class Context
     {
-        private readonly string ConnectionString = "Server=localhost;database=pr5;uid=root;";
+        private readonly string ConnectionString = "Server=localhost;database=pr5;uid=root;port=3303";
 
         public bool AuthenticateUser(string username, string password, out bool isBlackListed)
         {
