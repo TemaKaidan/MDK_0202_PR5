@@ -10,7 +10,7 @@ namespace PR5
     {
         static void Main(string[] args)
         {
-
+            int asd = 123;
         }
     }
 }
