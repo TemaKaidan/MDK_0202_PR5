@@ -123,5 +123,20 @@ namespace PR5
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(" - remove user from blacklist");
         }
+
+        static void AddToBlacklist()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("Enter username to add to blacklist: ");
+            string username = Console.ReadLine();
+            dbContext.AddToBlacklist(username);
+            var client = AllClients.FirstOrDefault(c => c.Username == username);
+            if (client != null)
+            {
+                AllClients.Remove(client);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Client {client.Token} disconnected due to being added to blacklist.");
+            }
+        }
     }
 }
