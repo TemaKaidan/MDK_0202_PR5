@@ -51,6 +51,19 @@ namespace Client
             Console.WriteLine("To change, write the command: /config");
         }
 
+        static void SetCommand()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            string Command = Console.ReadLine();
+            switch (Command)
+            {
+                case "/config": File.Delete(Directory.GetCurrentDirectory() + "/.config"); OnSettings(); break;
+                case "/connect": AuthenticateUser(); break;
+                case "/status": GetStatus(); break;
+                case "/help": Help(); break;
+            }
+        }
+
         static void AuthenticateUser()
         {
             Console.ForegroundColor = ConsoleColor.White;
