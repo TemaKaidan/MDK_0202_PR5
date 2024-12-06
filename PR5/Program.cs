@@ -22,15 +22,10 @@ namespace PR5
 
         static void Main(string[] args)
         {
-            dbContext = new Context();
             OnSettings();
-            Thread tListner = new Thread(ConnectServer);
-            tListner.Start();
-            Thread tDisconnect = new Thread(DisconnectClient);
-            tDisconnect.Start();
-            while (true) SetCommand();
         }
 
+        
         static void OnSettings()
         {
             string Path = Directory.GetCurrentDirectory() + "/.config";
