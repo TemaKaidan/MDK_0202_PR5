@@ -44,18 +44,18 @@ namespace PR5
                 Duration = int.Parse(sr.ReadLine());
                 sr.Close();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Server IP-address: {ServerIPAddress.ToString()};\nServer port: {ServerPort};\nMax client: {MaxClient};\nDuration: {Duration};");
+                Console.WriteLine($"IP-address сервера: {ServerIPAddress.ToString()};\nПорт сервера: {ServerPort};\nМаксимум клиентов: {MaxClient};\nПродолжительность: {Duration};");
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"Please, provide the IP-address: ");
+                Console.Write($"Укажите свой IP-адрес: ");
                 ServerIPAddress = IPAddress.Parse(Console.ReadLine());
-                Console.Write($"Please, specify the port: ");
+                Console.Write($"Укажите свой порт: ");
                 ServerPort = int.Parse(Console.ReadLine());
-                Console.Write($"Please, specify the maximum number of clients: ");
+                Console.Write($"Укажите максимальное количество клиентов: ");
                 MaxClient = int.Parse(Console.ReadLine());
-                Console.Write($"Please, specify the duration of the license: ");
+                Console.Write($"Укажите срок действия лицензии: ");
                 Duration = int.Parse(Console.ReadLine());
                 StreamWriter sw = new StreamWriter(Path);
                 sw.WriteLine(ServerIPAddress.ToString());
@@ -65,7 +65,7 @@ namespace PR5
                 sw.Close();
             }
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("To change, write the command: /config");
+            Console.WriteLine("Чтобы изменить, введите команду: /config");
         }
 
         static void SetCommand()
@@ -77,9 +77,9 @@ namespace PR5
                 case "/config": File.Delete(Directory.GetCurrentDirectory() + "/.config"); OnSettings(); break;
                 case "/status": GetStatus(); break;
                 case "/help": Help(); break;
-                case "/add_to_blacklist": AddToBlacklist(); break;
-                case "/remove_from_blacklist": RemoveFromBlacklist(); break;
-                case "/blacklist": dbContext.ShowBlacklist(); break;
+                case "/ban": AddToBlacklist(); break;
+                case "/removeban": RemoveFromBlacklist(); break;
+                case "/banlist": dbContext.ShowBlacklist(); break;
                 default: if (Command.Contains("/disconnect")) DisconnectServer(Command); break;
             }
         }
@@ -92,50 +92,56 @@ namespace PR5
             {
                 int Duration = (int)DateTime.Now.Subtract(client.DateConnect).TotalSeconds;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Client: {client.Token}, time connection: {client.DateConnect.ToString("HH:mm:ss dd.MM")}, duration: {Duration}");
+                Console.WriteLine($"Клиент: {client.Token}, время подключения: {client.DateConnect.ToString("HH:mm:ss dd.MM")}, продолжительность: {Duration}");
             }
         }
 
         static void Help()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Command to the clients: ");
+            Console.WriteLine("Команда в сторону клиента: ");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/config");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" - set initial settings");
+            Console.WriteLine(" - начальные настройки");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/disconnect");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" - disconnect users from server");
+            Console.WriteLine(" - отключение пользователей от сервера");
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/status");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" - show list users");
+            Console.WriteLine(" - показать список пользователей");
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("/add_to_blacklist");
+            Console.Write("/ban");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" - add user to blacklist");
+            Console.WriteLine(" - добавить клиента в черный список");
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("/remove_from_blacklist");
+            Console.Write("/removeban");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" - remove user from blacklist");
+            Console.WriteLine(" - удалить клиента из черного списка");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("/banlist");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" - список черного листа");
         }
 
         static void AddToBlacklist()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write("Enter username to add to blacklist: ");
+            Console.Write("Введите имя пользователя для добавления в черный список: ");
             string username = Console.ReadLine();
             dbContext.AddToBlacklist(username);
             var client = AllClients.FirstOrDefault(c => c.Username == username);
@@ -143,14 +149,14 @@ namespace PR5
             {
                 AllClients.Remove(client);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Client {client.Token} disconnected due to being added to blacklist.");
+                Console.WriteLine($"Клиент {client.Token} отключен из-за добавления в черный список.");
             }
         }
 
         static void RemoveFromBlacklist()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write("Enter username to remove from blacklist: ");
+            Console.Write("Введите имя пользователя для удаления из черного списка: ");
             string username = Console.ReadLine();
             dbContext.RemoveFromBlacklist(username);
         }
@@ -163,12 +169,12 @@ namespace PR5
                 var DisconnectClient = AllClients.Find(x => x.Token == Token);
                 AllClients.Remove(DisconnectClient);
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Client: {Token} disconnect from server");
+                Console.WriteLine($"Клиент: {Token} отключен от сервера");
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Ошибка: " + ex.Message);
             }
         }
 
@@ -194,7 +200,7 @@ namespace PR5
                 catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Error: " + ex.Message);
+                    Console.WriteLine("Ошибка: " + ex.Message);
                 }
             }
         }
@@ -209,7 +215,7 @@ namespace PR5
                     if (ClientDuration > Duration)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Client: {AllClients[i].Token} disconnect from server due to timeout");
+                        Console.WriteLine($"Клиент: {AllClients[i].Token} отключен от сервера из-за окончания времени");
                         AllClients.RemoveAt(i);
                     }
                 }
@@ -239,7 +245,7 @@ namespace PR5
                         var newClient = new Client { Token = Client.GenerateToken(), DateConnect = DateTime.Now, Username = username };
                         AllClients.Add(newClient);
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"New client connection: {newClient.Token}");
+                        Console.WriteLine($"Новый клиент подключен: {newClient.Token}");
                         return newClient.Token;
                     }
                     else
@@ -259,13 +265,13 @@ namespace PR5
                     var newClient = new Client();
                     AllClients.Add(newClient);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"New client connection: {newClient.Token}");
+                    Console.WriteLine($"Новый клиент подключен: {newClient.Token}");
                     return newClient.Token;
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("There isn't enough space on the license server");
+                    Console.WriteLine("На сервере нет места для еще одного подключения");
                     return "/limit";
                 }
             }

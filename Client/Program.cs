@@ -37,14 +37,14 @@ namespace Client
                 ServerPort = int.Parse(sr.ReadLine());
                 sr.Close();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Server IP-address: {ServerIPAddress.ToString()}; \nServer port: {ServerPort};");
+                Console.WriteLine($"IP-адрес сервера: {ServerIPAddress.ToString()}; \nПорт сервера: {ServerPort};");
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"Please, provide the IP-address: ");
+                Console.Write($"Укажите свой IP-адрес: ");
                 ServerIPAddress = IPAddress.Parse(Console.ReadLine());
-                Console.Write($"Please, specify the port: ");
+                Console.Write($"Укажите порт: ");
                 ServerPort = int.Parse(Console.ReadLine());
                 StreamWriter sw = new StreamWriter(Path);
                 sw.WriteLine(ServerIPAddress.ToString());
@@ -52,7 +52,7 @@ namespace Client
                 sw.Close();
             }
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("To change, write the command: /config");
+            Console.WriteLine("Чтобы изменить, введите команду: /config");
         }
 
         static void SetCommand()
@@ -71,9 +71,9 @@ namespace Client
         static void AuthenticateUser()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write("Enter your username: ");
+            Console.Write("Введите имя пользователя: ");
             string username = Console.ReadLine();
-            Console.Write("Enter your password: ");
+            Console.Write("Введите пароль: ");
             string password = Console.ReadLine();
             ConnectServer(username, password);
         }
@@ -89,13 +89,13 @@ namespace Client
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Ошибка: " + ex.Message);
                 return;
             }
             if (Socket.Connected)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Connection to server successful");
+                
                 string authCommand = $"/auth {username} {password}";
                 Socket.Send(Encoding.UTF8.GetBytes(authCommand));
                 byte[] bytes = new byte[10485760];
@@ -104,18 +104,19 @@ namespace Client
                 if (Response == "/auth_failed")
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Authentication failed. Invalid username or password.");
+                    Console.WriteLine("Не удалось выполнить аутентификацию. Неверное имя пользователя или пароль");
                 }
                 else if (Response == "/blacklist")
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("You are in the blacklist. Connection denied.");
+                    Console.WriteLine("Вы внесены в черный список. Невозможно подключиться.");
                 }
                 else
                 {
                     ClientToken = Response;
                     ClientDateConnection = DateTime.Now;
-                    Console.WriteLine($"Received connection token: {ClientToken}");
+                    Console.WriteLine("Подключение к серверу выполнено успешно!");
+                    Console.WriteLine($"Токен подключения: {ClientToken}");
                 }
             }
         }
@@ -135,7 +136,7 @@ namespace Client
                     catch (Exception ex)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Error: " + ex.Message);
+                        Console.WriteLine("Ошибка: " + ex.Message);
                     }
                     if (Socket.Connected)
                     {
@@ -146,7 +147,7 @@ namespace Client
                         if (Response == "/disconnect")
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("The client is disconnected from server");
+                            Console.WriteLine("Клиент отключен от сервера");
                             ClientToken = String.Empty;
                         }
                     }
@@ -159,25 +160,31 @@ namespace Client
         {
             int Duration = (int)DateTime.Now.Subtract(ClientDateConnection).TotalSeconds;
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"Client: {ClientToken}, time connection: {ClientDateConnection.ToString("HH:mm:ss dd.MM")}, duration: {Duration}");
+            Console.WriteLine($"Клиент: {ClientToken}, время подключения: {ClientDateConnection.ToString("HH:mm:ss dd.MM")}, продолжительность: {Duration}");
         }
 
         static void Help()
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Command to the server: ");
+            Console.WriteLine("Команда в сторону сервера: ");
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/config");
+
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("  - set initial settings");
+            Console.WriteLine(" - начальные настройки");
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/connect");
+
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" - connection to the server");
+            Console.WriteLine(" - подключение к серверу");
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("/status");
+
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("  - show list users");
+            Console.WriteLine(" - показать список пользователей");
         }
     }
 }

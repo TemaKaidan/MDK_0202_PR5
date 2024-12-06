@@ -51,7 +51,7 @@ namespace PR5
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Ошибка: " + ex.Message);
                 isBlackListed = false;
                 return false;
             }
@@ -68,12 +68,12 @@ namespace PR5
             if (rowsAffected > 0)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"User {username} added to blacklist.");
+                Console.WriteLine($"Клиент {username} добавлен в черный список.");
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"User {username} not found.");
+                Console.WriteLine($"Клиент {username} не найден.");
             }
         }
 
@@ -88,12 +88,12 @@ namespace PR5
             if (rowsAffected > 0)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"User {username} removed from blacklist.");
+                Console.WriteLine($"Клиент {username} удален из черного списка.");
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"User {username} not found or already not in blacklist.");
+                Console.WriteLine($"Клиент {username} не найден или его уже нет в черном списке.");
             }
         }
 
@@ -106,7 +106,7 @@ namespace PR5
             using (MySqlDataReader reader = command.ExecuteReader())
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Blacklisted users:");
+                Console.WriteLine("Заблокированные:");
                 while (reader.Read())
                 {
                     Console.WriteLine(reader["username"]);
