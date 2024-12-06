@@ -6,8 +6,24 @@ using System.Threading.Tasks;
 
 namespace PR5
 {
-    public  class Client
+    public class Client
     {
+        public string Token { get; set; }
+        public DateTime DateConnect { get; set; }
+        public string Username { get; set; }
 
+        public Client()
+        {
+            this.Token = GenerateToken();
+            DateConnect = DateTime.Now;
+        }
+
+        public static string GenerateToken()
+        {
+            Random rnd = new Random();
+            string Chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+            string Token = new string(Enumerable.Repeat(Chars, 15).Select(x => x[rnd.Next(Chars.Length)]).ToArray());
+            return Token;
+        }
     }
 }
