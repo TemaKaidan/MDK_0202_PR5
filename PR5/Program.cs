@@ -31,6 +31,7 @@ namespace PR5
             while (true) SetCommand();
         }
 
+        
         static void OnSettings()
         {
             string Path = Directory.GetCurrentDirectory() + "/.config";
